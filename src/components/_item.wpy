@@ -1,0 +1,31 @@
+<style lang="stylus">
+  .item-container
+    width: 100%
+    background: red
+</style>
+<template lang="pug">
+  view.item-container
+    text {{title}}
+    text {{downCountTime.day}}
+</template>
+<script>
+import wepy from 'wepy'
+import {downCountTime} from '../helper/util.js'
+
+export default class Item extends wepy.component {
+  props = {
+    title: String,
+    time: String
+  }
+  data = {
+  }
+  computed = {
+    getDownCount() {
+      return downCountTime(this.time)
+    }
+  }
+}
+</script>
+
+
+

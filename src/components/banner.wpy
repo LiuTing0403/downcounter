@@ -1,0 +1,29 @@
+<style lang="less">
+  .banner-container {
+    width: 100%;
+    height: 400rpx;
+  }
+</style>
+<template lang="pug">
+  view.banner-container
+    text.banner-title {{title}}
+    text.banner-count {{getDownCount.day}}
+</template>
+<script>
+import wepy from 'wepy'
+import {downCountTime} from '../helper/util.js'
+
+export default class Banner extends wepy.component{
+  data = {
+    title: '倒计时',
+    time: '2018-06-07'
+  }
+  computed = {
+    getDownCount() {
+      return downCountTime(this.time)
+    }
+  }
+}
+</script>
+
+
