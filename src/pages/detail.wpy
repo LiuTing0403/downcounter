@@ -1,0 +1,20 @@
+<style lang="stylus">
+  .detail-container
+    width: 100%
+    height: 100%
+    background: #f8f8f9
+</style>
+<template lang="pug">
+  view.detail-container
+    text 我是详情
+</template>
+<script>
+  import wepy from 'wepy'
+  export default class Detail extends wepy.page {
+    config = {
+      navigationBarTitleText: 'detail'
+    }
+  }
+</script>
+
+

@@ -1,14 +1,25 @@
 <style lang="stylus">
+  .mylist
+    width: 100%
+    padding: 0 34rpx
+    box-sizing: border-box
   .item-container
     width: 100%
-    background: red
+    height: 80rpx
+    color: #fff
+    padding: 0 20rpx
+    box-sizing: border-box
+    line-height: 80rpx
+  .item-downcount
+    float: right
 </style>
 <template lang="pug">
   view.mylist
     block(wx:for-items="{{list}}", wx:for-index="index", wx:for-item="item", wx:key="id")
-      view.item-container
-        text {{item.title}}
-        text {{item.time}}
+      navigator(url="/pages/detail?id={{item.id}}")
+        view.item-container(style="background: {{item.color}}")
+          text {{item.title}}
+          text.item-downcount {{item.downcount}}
 </template>
 <script>
   import wepy from 'wepy'
@@ -19,9 +30,22 @@
     data = {
       list: [
         {
-          id: '0',
+          id: 0,
           title: '高考',
-          time: '2018-06-07'
+          time: '2018-06-07',
+          color: '#01c9e7'
+        },
+        {
+          id: 1,
+          title: '妈妈生日',
+          time: '2017-12-09',
+          color: '#ee712b'
+        },
+        {
+          id: 2,
+          title: '纪念日',
+          time: '2018-04-09',
+          color: '#fcac0c'
         }
       ]
     }
@@ -51,6 +75,18 @@
     }
 
     onLoad () {
+      try {
+        const data = wx.getStorageSync('data')
+        if (data) {
+          this.list = JSON.parse(data)
+        }
+      } catch(e) {
+        console.log('get storage err')
+      }
+      this.list = this.list.map((item) => {
+        item.downcount = downCountTime(item.time).day
+        return item
+      })
     }
   }
 </script>

@@ -1,0 +1,86 @@
+<style lang="stylus">
+  .editor-container
+    width: 100%
+  .color-cell
+    width: 50rpx
+    height: 50rpx
+    display: inline-block
+</style>
+<template lang="pug">
+  view.editor-container
+    form(bindsubmit="formSubmit")
+      text 标题
+      input(type="text", placeholder="输入标题", value="{{title}}", name="title")
+      text 日期
+      picker(mode="date", value="{{date}}", start="2017-01-01", end="2030-01-01", bindchange="bindDateChange") 当前日期{{date}}
+      text 颜色
+      view.color-cell(style="background: {{selColor}}")
+      view
+        block(wx:for-items="{{colors}}", wx:for-index="index", wx:for-item="item", wx:key="index")
+          view.color-cell(style="background: {{item}}", @tap="selectColor", data-color="{{item}}")
+      button(formType="submit") Submit
+</template>
+<script>
+  import wepy from 'wepy'
+  import {getCurrentDateString} from '../helper/util'
+
+  export default class Editor extends wepy.page {
+    config = {
+      navigationBarTitleText: 'editor'
+    }
+    data = {
+      date: '',
+      colors: [
+        '#ff9900',
+        '#43dde6',
+        '#02c39a',
+        '#facc2e',
+        '#c582d5',
+        '#98d083',
+        '#9870fc'
+      ],
+      selColor: '#43dde6',
+      title: '',
+      list: []
+    }
+    methods = {
+      formSubmit(e) {
+        console.log('submit', e.detail.value)
+        const newItem = {
+          title: e.detail.value.title,
+          date: this.date,
+          color: this.selColor,
+          id: this.list.length
+        }
+        this.list.push(newItem)
+        try {
+          wx.setStorageSync('data', JSON.stringify(this.list))
+        } catch (e){
+          console.log('set storage err', e)
+        }
+        wx.navigateBack()
+      },
+      bindDateChange(e) {
+        console.log('bind date change', e.detail.value)
+        this.date = e.detail.value
+      },
+      selectColor(e) {
+        console.log(e.currentTarget.dataset.color)
+        this.selColor = e.currentTarget.dataset.color
+      }
+    }
+    onLoad(options) {
+      this.date = getCurrentDateString()
+      try {
+        const list = wx.getStorageSync('data')
+        if (list) {
+          this.list = JSON.parse(list)
+        }
+      } catch(e) {
+        console.log('get storage error')
+      }
+      console.log(options)
+    }
+  }
+</script>
+

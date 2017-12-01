@@ -32,10 +32,6 @@ export function formatTime(str, spliter) {
   return `${[year, month, day].join(spliter || '-')} ${hour}:${minute}:${seconds}`
 }
 
-function formateNum(num) {
-  return num < 10 ? `0${num}` : num
-}
-
 export function downCountTime(startTime) {
   const date = new Date(startTime)
   const now = new Date()
@@ -48,12 +44,12 @@ export function downCountTime(startTime) {
   const min = Math.floor((delta - day * DAY - HOUR * hour) / MIN)
   const sec = Math.floor((delta - day * DAY - HOUR * hour - MIN * min) / SEC)
   if (day > 0) {
-    return {day: formateNum(day), hour: formateNum(hour)}
+    return {day, hour}
   }
   if (hour > 0) {
-    return {hour: formateNum(hour), min: formateNum(min)}
+    return {hour, min}
   }
-  return {min: formateNum(min), sec: formateNum(sec)}
+  return {min, sec}
   // return `${day}天${hour}小时${min}分${sec}秒`
 }
 
@@ -64,4 +60,9 @@ export function timeExpired(time) {
   const today = new Date()
   const target = new Date(time)
   return target <= today
+}
+
+export function getCurrentDateString() {
+  const today = new Date()
+  return today.toISOString().slice(0, 10)
 }
