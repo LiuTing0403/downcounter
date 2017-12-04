@@ -34,22 +34,23 @@ export function formatTime(str, spliter) {
 
 export function downCountTime(startTime) {
   const date = new Date(startTime)
-  const now = new Date()
+  const now = Date.now()
+  let day
+  console.log({startTime, now})
   if (now > date) {
-    return {min: '00', sec: '00'}
+    day = 0
+    return {day}
   }
   const delta = date - now
-  const day = Math.floor(delta / DAY)
-  const hour = Math.floor((delta - day * DAY) / HOUR)
-  const min = Math.floor((delta - day * DAY - HOUR * hour) / MIN)
-  const sec = Math.floor((delta - day * DAY - HOUR * hour - MIN * min) / SEC)
-  if (day > 0) {
-    return {day, hour}
+  if (delta > 0) {
+    day = Math.floor(delta / DAY)
+  } else {
+    day = 0
   }
-  if (hour > 0) {
-    return {hour, min}
-  }
-  return {min, sec}
+  // const hour = Math.floor((delta - day * DAY) / HOUR)
+  // const min = Math.floor((delta - day * DAY - HOUR * hour) / MIN)
+  // const sec = Math.floor((delta - day * DAY - HOUR * hour - MIN * min) / SEC)
+  return {day}
   // return `${day}天${hour}小时${min}分${sec}秒`
 }
 

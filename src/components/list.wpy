@@ -28,49 +28,23 @@
 
   export default class List extends wepy.component {
     data = {
-      list: [
-        {
-          id: 0,
-          title: '高考',
-          time: '2018-06-07',
-          color: '#01c9e7'
-        },
-        {
-          id: 1,
-          title: '妈妈生日',
-          time: '2017-12-09',
-          color: '#ee712b'
-        },
-        {
-          id: 2,
-          title: '纪念日',
-          time: '2018-04-09',
-          color: '#fcac0c'
-        }
-      ]
+      list: [],
     }
     components = {
       item: Item
     }
-    events = {
-      'index-broadcast': (...args) => {
-        let $event = args[args.length - 1]
-        console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`)
-      }
-    }
 
     methods = {
       getDownCount() {
-        console.log('methos')
         return downCountTime()
       },
       tap () {
         // this.num = this.num + 1
         console.log(this.$name + ' tap')
       },
-      add () {
-        let len = this.list.length
-        this.list.push({id: len + 1, title: 'title_' + len})
+      add ({newItem}) {
+        newItem.downcount = downCountTime(newItem.time).day
+        this.list.push(newItem)
       }
     }
 
@@ -84,9 +58,10 @@
         console.log('get storage err')
       }
       this.list = this.list.map((item) => {
-        item.downcount = downCountTime(item.time).day
+        item.downcount = downCountTime(item.date).day
         return item
       })
+      console.log('onload')
     }
   }
 </script>

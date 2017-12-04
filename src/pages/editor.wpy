@@ -23,13 +23,17 @@
 <script>
   import wepy from 'wepy'
   import {getCurrentDateString} from '../helper/util'
+  import List from '../components/list'
 
   export default class Editor extends wepy.page {
     config = {
       navigationBarTitleText: 'editor'
     }
+    components = {
+      list: List
+    }
     data = {
-      date: '',
+      date: getCurrentDateString(),
       colors: [
         '#ff9900',
         '#43dde6',
@@ -45,7 +49,6 @@
     }
     methods = {
       formSubmit(e) {
-        console.log('submit', e.detail.value)
         const newItem = {
           title: e.detail.value.title,
           date: this.date,
@@ -53,12 +56,14 @@
           id: this.list.length
         }
         this.list.push(newItem)
+        console.log('submit', newItem)
         try {
           wx.setStorageSync('data', JSON.stringify(this.list))
         } catch (e){
           console.log('set storage err', e)
         }
-        wx.navigateBack()
+        wx.reLaunch({url: '/pages/index'})
+        this.$invoke('list', 'add', {newItem})
       },
       bindDateChange(e) {
         console.log('bind date change', e.detail.value)

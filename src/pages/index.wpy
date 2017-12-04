@@ -34,10 +34,17 @@
         wx.navigateTo({
           url: '/pages/editor'
         })
+      },
+      addNewItem(args) {
+        console.log(args)
       }
     }
 
     onLoad() {
+      console.log('onload')
+    }
+    onShow () {
+      console.log('on show')
     }
   }
 </script>

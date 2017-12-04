@@ -6,13 +6,40 @@
 </style>
 <template lang="pug">
   view.detail-container
-    text 我是详情
+    text {{title}}
+    text {{downcount}}
 </template>
 <script>
   import wepy from 'wepy'
+  import {downCountTime} from '../helper/util'
   export default class Detail extends wepy.page {
     config = {
       navigationBarTitleText: 'detail'
+    }
+    data = {
+      list: [],
+      id: 0,
+      title: '',
+      time: '',
+      downcount: ''
+    }
+    onLoad (options) {
+      console.log(options)
+      try {
+        const data = wx.getStorageSync('data')
+        if (data) {
+          this.list = JSON.parse(data)
+        }
+      } catch(e) {
+        console.log('get storage err')
+      }
+      const id = options.id
+      const item = this.list.find((v) => +v.id === +id)
+      console.log(item)
+      this.id = id
+      this.title = item.title
+      this.time = item.time
+      this.downcount = downCountTime(item.time).day
     }
   }
 </script>
