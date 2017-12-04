@@ -14,7 +14,7 @@
       text 日期
       picker(mode="date", value="{{date}}", start="2017-01-01", end="2030-01-01", bindchange="bindDateChange") 当前日期{{date}}
       text 颜色
-      view.color-cell(style="background: {{selColor}}")
+      view.color-cell(style="background: {{color}}")
       view
         block(wx:for-items="{{colors}}", wx:for-index="index", wx:for-item="item", wx:key="index")
           view.color-cell(style="background: {{item}}", @tap="selectColor", data-color="{{item}}")
@@ -43,19 +43,26 @@
         '#98d083',
         '#9870fc'
       ],
-      selColor: '#43dde6',
+      color: '#43dde6',
       title: '',
-      list: []
+      list: [],
+      id: NaN
     }
     methods = {
       formSubmit(e) {
         const newItem = {
           title: e.detail.value.title,
           date: this.date,
-          color: this.selColor,
-          id: this.list.length
+          color: this.color,
+          id: this.id || this.list.length
         }
-        this.list.push(newItem)
+        if (this.id) {
+          const index = this.list.findIndex(v => +v.id === +this.id)
+          this.list[index] = newItem
+        }
+        else {
+          this.list.push(newItem)
+        }
         console.log('submit', newItem)
         try {
           wx.setStorageSync('data', JSON.stringify(this.list))
@@ -71,7 +78,7 @@
       },
       selectColor(e) {
         console.log(e.currentTarget.dataset.color)
-        this.selColor = e.currentTarget.dataset.color
+        this.color = e.currentTarget.dataset.color
       }
     }
     onLoad(options) {
@@ -84,7 +91,12 @@
       } catch(e) {
         console.log('get storage error')
       }
-      console.log(options)
+      const id = options.id
+      const item = this.list.find((v) => +v.id === +id)
+      this.id = id
+      this.title = item.title
+      this.date = item.date
+      this.color = item.color
     }
   }
 </script>

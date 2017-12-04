@@ -3,11 +3,13 @@
     width: 100%
     height: 100%
     background: #f8f8f9
+    color: #fff
 </style>
 <template lang="pug">
-  view.detail-container
+  view.detail-container(style="background: {{color}}")
     text {{title}}
     text {{downcount}}
+    navigator(url="/pages/editor?id={{id}}") 编辑
 </template>
 <script>
   import wepy from 'wepy'
@@ -20,11 +22,11 @@
       list: [],
       id: 0,
       title: '',
-      time: '',
-      downcount: ''
+      date: '',
+      downcount: '',
+      color: ''
     }
     onLoad (options) {
-      console.log(options)
       try {
         const data = wx.getStorageSync('data')
         if (data) {
@@ -35,11 +37,11 @@
       }
       const id = options.id
       const item = this.list.find((v) => +v.id === +id)
-      console.log(item)
       this.id = id
       this.title = item.title
-      this.time = item.time
-      this.downcount = downCountTime(item.time).day
+      this.date = item.date
+      this.color = item.color
+      this.downcount = downCountTime(item.date).day
     }
   }
 </script>
