@@ -3,28 +3,45 @@
     width: 100%
     padding: 0 34rpx
     box-sizing: border-box
+    flex: 1
+    overflow: scroll
+    padding-bottom: 250rpx
   .item-container
     width: 100%
-    height: 80rpx
-    color: #fff
     padding: 0 20rpx
     box-sizing: border-box
     line-height: 80rpx
-  .item-downcount
-    float: right
+    background: transparent
+    display: flex
+    align-items: center
+    justify-content: space-between
+    border-top: 2px solid 
+    padding: 40rpx 0
+  .canvas
+    width: 110px
+    height: 110px
+  .item-title
+    font-size: 18px
+    line-height: 1.7
+  .item-subtitle
+    font-size: 14px
+    color: #666666
+    line-height: 1
 </style>
 <template lang="pug">
   view.mylist
     block(wx:for-items="{{list}}", wx:for-index="index", wx:for-item="item", wx:key="id")
       navigator(url="/pages/detail?id={{item.id}}")
-        view.item-container(style="background: {{item.color}}")
-          text {{item.title}}
-          text.item-downcount {{item.downcount}}
+        view.item-container(style="color: {{item.color}}")
+          view
+            view.item-title {{item.title}}
+            view.item-subtitle {{item.date}}
+          canvas.canvas(canvas-id="canvas-{{item.id}}")
 </template>
 <script>
   import wepy from 'wepy'
   import Item from './_item'
-  import {downCountTime} from '../helper/util.js'
+  import {downCountTime, getColor} from '../helper/util.js'
 
   export default class List extends wepy.component {
     data = {
@@ -59,8 +76,39 @@
       }
       this.list = this.list.map((item) => {
         item.downcount = downCountTime(item.date).day
+        item.color = getColor(item.downcount)
         return item
       })
+      for(let i = 0; i < this.list.length; i ++) {
+        const item = this.list[i]
+        const ctx = wx.createCanvasContext('canvas-' + item.id)
+        const color = item.color
+
+        ctx.beginPath()
+        ctx.setLineWidth(4)
+        ctx.arc(55, 55, 50, (item.downcount / 365 * 2 - 1/2) * Math.PI, Math.PI * 3 / 2)
+        ctx.setStrokeStyle('#2b2f35')
+        ctx.stroke()
+
+        ctx.beginPath()
+        ctx.setLineCap('round')
+        ctx.setLineWidth(4)
+        ctx.arc(55, 55, 50, - Math.PI / 2, (item.downcount / 365 * 2 - 1/2) * Math.PI)
+        ctx.setStrokeStyle(color)
+        ctx.stroke()
+
+        ctx.setFontSize(24)
+        ctx.setFillStyle(color)
+        ctx.setTextAlign('center')
+        ctx.fillText(item.downcount + '', 55, 65)
+
+        ctx.setFontSize(12)
+        ctx.setFillStyle('#666666')
+        ctx.setTextAlign('center')
+        ctx.fillText('DAYS', 55, 85)
+
+        ctx.draw()
+      }
       console.log('onload')
     }
   }

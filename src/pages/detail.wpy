@@ -1,19 +1,49 @@
-<style lang="stylus">
+<style lang="stylus" scoped>
   .detail-container
     width: 100%
     height: 100%
-    background: #f8f8f9
     color: #fff
+    position: absolute
+    background: #1c2024
+    display: flex
+    align-items: center
+    flex-direction: column
+  .canvas-detail
+    width: 220px
+    height: 220px
+    align-self: center
+    margin-top: 40px
+  .title
+    font-size: 20px
+    margin-top: 20px
+  .btn
+    width: 160rpx
+    height: 160rpx
+    font-size: 100rpx
+    border-radius: 100rpx
+    background: #1c2024
+    line-height: 140rpx
+    box-shadow: 0 0 40rpx #898989
+    position: fixed
+    bottom: 34rpx
+  .share-btn
+    left: 34rpx
+  .edit-btn
+    right: 34rpx
 </style>
 <template lang="pug">
-  view.detail-container(style="background: {{color}}")
-    text {{title}}
-    text {{downcount}}
-    navigator(url="/pages/editor?id={{id}}") 编辑
+  view.detail-container(style="color: {{color}}")
+    canvas.canvas-detail(canvas-id="detail")
+    text.title {{title}}
+    navigator(url="/pages/editor?id={{id}}")
+      button.btn.edit-btn
+        image(src="../images/edit-2.png" style="width: 55rpx; height: 55rpx; margin-top: 45rpx")
+    button.btn.share-btn(open-type="share")
+      image(src="../images/share.png" style="width: 70rpx; height: 70rpx; margin-top: 45rpx")
 </template>
 <script>
   import wepy from 'wepy'
-  import {downCountTime} from '../helper/util'
+  import {downCountTime, getColor} from '../helper/util'
   export default class Detail extends wepy.page {
     config = {
       navigationBarTitleText: 'detail'
@@ -40,8 +70,35 @@
       this.id = id
       this.title = item.title
       this.date = item.date
-      this.color = item.color
       this.downcount = downCountTime(item.date).day
+      this.color = getColor(this.downcount)
+      const ctx = wx.createCanvasContext('detail')
+      const color = this.color
+
+      ctx.beginPath()
+      ctx.setLineWidth(10)
+      ctx.arc(110, 110, 100, (this.downcount / 365 * 2 - 1/2) * Math.PI, Math.PI * 3 / 2)
+      ctx.setStrokeStyle('#2b2f35')
+      ctx.stroke()
+
+      ctx.beginPath()
+      ctx.setLineCap('round')
+      ctx.setLineWidth(10)
+      ctx.arc(110, 110, 100, - Math.PI / 2, (this.downcount / 365 * 2 - 1/2) * Math.PI)
+      ctx.setStrokeStyle(color)
+      ctx.stroke()
+
+      ctx.setFontSize(50)
+      ctx.setFillStyle(color)
+      ctx.setTextAlign('center')
+      ctx.fillText(this.downcount + '', 110, 130)
+
+      ctx.setFontSize(18)
+      ctx.setFillStyle('#666666')
+      ctx.setTextAlign('center')
+      ctx.fillText('DAYS', 110, 170)
+
+      ctx.draw()
     }
   }
 </script>

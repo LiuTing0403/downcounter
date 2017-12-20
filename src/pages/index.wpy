@@ -1,25 +1,55 @@
 <style lang="stylus">
+  .container
+    height: 100%
+    width: 100%
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: space-between
+    box-sizing: border-box
+    background: #1c2024
+    position: absolute
+    display: flex
   .create-new-btn
-    width: 200rpx
+    right: 34rpx
+    color: #87bd46
+    font-weight: 100
+  .btn
+    width: 160rpx
+    height: 160rpx
+    font-size: 100rpx
+    border-radius: 100rpx
+    background: #1c2024
+    line-height: 140rpx
+    box-shadow: 0 0 40rpx #898989
     position: fixed
-    bottom: 20rpx
+    bottom: 34rpx
+  .share-btn
+    left: 34rpx
+  .today
+    text-align: center
+    color: white
+    font-size: 32rpx
 </style>
 
 <template lang="pug">
   view.container
-    banner
+    view.today {{today}}
     list
-    button.create-new-btn(@tap="createNew") 新建
+    button.btn.create-new-btn(@tap="createNew") +
+    button.btn.share-btn(open-type="share")
+      image(src="../images/share.png" style="width: 70rpx; height: 70rpx; margin-top: 45rpx")
 </template>
 
 <script>
   import wepy from 'wepy'
   import List from '../components/list'
   import Banner from '../components/banner'
+  import {getTodayString} from '../helper/util.js'
 
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '倒计时'
+      navigationBarTitleText: 'TODAY'
     }
     components = {
       list: List,
@@ -27,6 +57,7 @@
     }
 
     data = {
+      today: ''
     }
 
     methods = {
@@ -39,9 +70,15 @@
         console.log(args)
       }
     }
-
+    onShareAppMessage() {
+      return {
+        title: '标题',
+        path: '/pages/index'
+      }
+    }
     onLoad() {
       console.log('onload')
+      this.today = getTodayString()
     }
     onShow () {
       console.log('on show')

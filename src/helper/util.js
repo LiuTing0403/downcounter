@@ -4,6 +4,14 @@ const MIN = SEC * 60
 const HOUR = MIN * 60
 const DAY = HOUR * 24
 
+const colors = [
+  '#44a3a2',
+  '#d79c44',
+  '#e50033'
+]
+
+const weekdays = ['日', '一', '二', '三', '四', '五', '六']
+
 export function isNoneEmptyObj(obj) {
   if (!obj || typeof (obj) !== 'object') {
     return false
@@ -66,4 +74,22 @@ export function timeExpired(time) {
 export function getCurrentDateString() {
   const today = new Date()
   return today.toISOString().slice(0, 10)
+}
+
+export function getColor(days) {
+  if (days > 100) {
+    return colors[0]
+  }
+  if (days > 30) {
+    return colors[1]
+  }
+  return colors[2]
+}
+
+export function getTodayString() {
+  const today = new Date()
+  const day = today.getDate()
+  const month = today.getMonth() + 1
+  const weekday = today.getDay()
+  return `${month}月${day}日 星期${weekdays[weekday]}`
 }
